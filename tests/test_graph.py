@@ -5,6 +5,7 @@
 import os
 import unittest
 import urllib.request
+from urllib.error import HTTPError
 from io import StringIO
 
 from pointilist import graph
@@ -68,9 +69,11 @@ class TestFetchMethod(unittest.TestCase):
 
         mock_response_fd = StringIO("mock 404")
         g = graph.Graph('404')
-        ret = g.fetch()
+        with self.assertRaises(HTTPError) as cm:
+            g.fetch()
 
-        self.assertEqual(ret, None)
+        exc = cm.exception
+        self.assertEqual(exc.code, 404)
 
 
 if __name__ == '__main__':

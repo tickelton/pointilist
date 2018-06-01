@@ -10,7 +10,6 @@
 """
 
 import urllib.request
-from urllib.error import URLError, HTTPError
 
 
 class Graph:
@@ -21,16 +20,8 @@ class Graph:
 
     def fetch(self):
         """Retrieves contribution data from Github."""
+
         url = 'https://github.com/users/' + self.username + '/contributions'
-        try:
-            page = urllib.request.urlopen(url)
-        except HTTPError as err:
-            print("There was a problem fetching data from {}".format(url))
-            print('Error code: ', err.code)
-            return None
-        except URLError as err:
-            print("There was a problem fetching data from {}".format(url))
-            print('Reason: ', err.reason)
-            return None
+        page = urllib.request.urlopen(url)
 
         return page.readlines()
