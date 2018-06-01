@@ -78,6 +78,14 @@ class Graph:
         if root.tag != 'svg':
             raise ValueError('Expected svg, got {}'.format(root.tag))
 
+        # check if SVG class is correct
+        if root.get('class') != 'js-calendar-graph-svg':
+            raise ValueError(
+                'Expected class js-calendar-graph-svg, got {}'.format(
+                    root.get('class')
+                )
+            )
+
         # check if there are at least 365 days worth of data
         for rect in root.iter('rect'):
             if rect.get('class') == 'day':

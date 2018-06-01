@@ -19,6 +19,7 @@ STATIC_DIR = os.path.dirname(os.path.realpath(__file__)) \
 CONTRIB_HTML = STATIC_DIR + 'contributions.html'
 GARBAGE_HTML = STATIC_DIR + 'hello_world.html'
 SHORT_HTML = STATIC_DIR + 'contributions_short.html'
+CLASS_HTML = STATIC_DIR + 'contributions_wrong_class.html'
 
 mock_response_fd = StringIO("foobar")
 
@@ -82,8 +83,27 @@ class TestFetchMethod(unittest.TestCase):
 
         with open(GARBAGE_HTML, 'r') as mock_response_fd:
             g = graph.Graph('user')
-            with self.assertRaises(ValueError):
+            with self.assertRaises(ValueError) as cm:
                 g.fetch()
+
+        exc = cm.exception
+        self.assertEqual('Expected svg, got html', str(exc))
+
+    def test_fetch_wrong_svg_class(self):
+        """Check for ValueError if SVG has wrong class attribute."""
+
+        global mock_response_fd
+
+        with open(CLASS_HTML, 'r') as mock_response_fd:
+            g = graph.Graph('user')
+            with self.assertRaises(ValueError) as cm:
+                g.fetch()
+
+        exc = cm.exception
+        self.assertEqual(
+            'Expected class js-calendar-graph-svg, got foo',
+            str(exc)
+        )
 
     def test_fetch_short_graph(self):
         """Check for ValueError if there is not enough data in the graph."""
@@ -92,8 +112,11 @@ class TestFetchMethod(unittest.TestCase):
 
         with open(SHORT_HTML, 'r') as mock_response_fd:
             g = graph.Graph('user')
-            with self.assertRaises(ValueError):
+            with self.assertRaises(ValueError) as cm:
                 g.fetch()
+
+        exc = cm.exception
+        self.assertEqual('Too few data points in graph: 14 < 365', str(exc))
 
     def test_fetch_404(self):
         """Check for HTTPError if response is 404."""
