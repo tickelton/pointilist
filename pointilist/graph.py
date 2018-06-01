@@ -12,6 +12,54 @@
 import urllib.request
 import xml.etree.ElementTree as ET
 
+#graph_data = {
+#        'rects': [
+#            {
+#                'date': '2017-05-28',
+#                'count': 3,
+#                'fill': '#239a3b',
+#                'y': 0,
+#                'x': 13
+#            },
+#            {
+#                'date': '2017-05-29',
+#                'count': 3,
+#                'fill': '#239a3b',
+#                'y': 12,
+#                'x': 13
+#            },
+#            ...
+#        ],
+#        'months': [
+#            {
+#                'month': 'June',
+#                'x': 25,
+#                'y': 10
+#            },
+#            {
+#                'month': 'Jul',
+#                'x': 73,
+#                'y': 10
+#            },
+#            ...
+#        ],
+#        'wdays': [
+#            {
+#                'wday': 'Sun',
+#                'display': False,
+#                'x': -14,
+#                'y': 8
+#            },
+#            {
+#                'wday': 'Mon',
+#                'display': True,
+#                'x': -14,
+#                'y': 20
+#            },
+#            ...
+#        ]
+#    }
+
 
 class Graph:
     """Object that represents a user's github contribution graph."""
