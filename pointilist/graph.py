@@ -49,6 +49,16 @@ class Graph:
                 'Too few data points in graph: {} < 365'.format(rect_count)
             )
 
+    def _create_colormap(self):
+        max_count = int(max(self.data['rects'], key=lambda r: r['count'])['count'])
+        thresholds = [int(max_count*x) for x in [0.25, 0.5, 0.75]]
+        # #ebedf0 = 0
+        # c6e48b = 1 <= x <= max/6
+        # 7bc96f = max/6 < x <= max/3
+        # 239a3b = max/3 < x <= max/2
+        # #196127 = x > max/2
+        print(max_count, thresholds)
+
     def _parse_graph_data(self, graph_data):
         root = ET.fromstring(graph_data)
 
@@ -78,6 +88,8 @@ class Graph:
                 'y': text.get('dy')
             } for text in root.iter('text') if text.get('class') == 'wday'
         ]
+
+        self._create_colormap()
 
     def fetch(self):
         """Retrieves contribution data from github."""
