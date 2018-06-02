@@ -12,57 +12,11 @@
 import urllib.request
 import xml.etree.ElementTree as ET
 
-#graph_data = {
-#        'rects': [
-#            {
-#                'date': '2017-05-28',
-#                'count': 3,
-#                'fill': '#239a3b',
-#                'y': 0,
-#                'x': 13
-#            },
-#            {
-#                'date': '2017-05-29',
-#                'count': 3,
-#                'fill': '#239a3b',
-#                'y': 12,
-#                'x': 13
-#            },
-#            ...
-#        ],
-#        'months': [
-#            {
-#                'month': 'June',
-#                'x': 25,
-#                'y': 10
-#            },
-#            {
-#                'month': 'Jul',
-#                'x': 73,
-#                'y': 10
-#            },
-#            ...
-#        ],
-#        'wdays': [
-#            {
-#                'wday': 'Sun',
-#                'display': False,
-#                'x': -14,
-#                'y': 8
-#            },
-#            {
-#                'wday': 'Mon',
-#                'display': True,
-#                'x': -14,
-#                'y': 20
-#            },
-#            ...
-#        ]
-#    }
-
 
 class Graph:
     """Object that represents a user's github contribution graph."""
+
+    data = {}
 
     def __init__(self, username):
         self.username = username
@@ -95,6 +49,36 @@ class Graph:
                 'Too few data points in graph: {} < 365'.format(rect_count)
             )
 
+    def _parse_graph_data(self, graph_data):
+        root = ET.fromstring(graph_data)
+
+        self.data['rects'] = [
+            {
+                'date': rect.get('data-date'),
+                'count': rect.get('data-count'),
+                'fill': rect.get('fill'),
+                'x': rect.get('x'),
+                'y': rect.get('y')
+            } for rect in root.iter('rect') if rect.get('class') == 'day'
+        ]
+
+        self.data['months'] = [
+            {
+                'month': text.text,
+                'x': text.get('x'),
+                'y': text.get('y')
+            } for text in root.iter('text') if text.get('class') == 'month'
+        ]
+
+        self.data['wdays'] = [
+            {
+                'wday': text.text,
+                'display': text.get('style') != "display: none;",
+                'x': text.get('dx'),
+                'y': text.get('dy')
+            } for text in root.iter('text') if text.get('class') == 'wday'
+        ]
+
     def fetch(self):
         """Retrieves contribution data from github."""
 
@@ -103,3 +87,4 @@ class Graph:
         graph_data = page.read()
 
         self._graph_data_valid(graph_data)
+        self._parse_graph_data(graph_data)
