@@ -45,7 +45,7 @@ VALID_GRAPH_REFERENCE_DATA = {
         {'x': '493', 'y': '-10', 'month': 'Mar'},
         {'x': '541', 'y': '-10', 'month': 'Apr'},
         {'x': '601', 'y': '-10', 'month': 'May'}
-     ],
+    ],
     'rects': [
         {'count': '3', 'date': '2017-05-28', 'x': '13', 'y': '0', 'fill': '#239a3b'},
         {'count': '3', 'date': '2017-05-29', 'x': '13', 'y': '12', 'fill': '#239a3b'},
@@ -469,7 +469,7 @@ class TestFetchMethod(unittest.TestCase):
 
         with open(CONTRIB_HTML, 'r') as mock_response_fd:
             g = graph.Graph('200')
-            ret = g.fetch()
+            g.fetch()
 
         self.assertEqual(g.data, VALID_GRAPH_REFERENCE_DATA)
 
