@@ -12,6 +12,8 @@
 import urllib.request
 import xml.etree.ElementTree as ET
 
+FILL_DEFAULT = ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127']
+
 
 class Graph:
     """Object that represents a user's github contribution graph."""
@@ -49,15 +51,43 @@ class Graph:
                 'Too few data points in graph: {} < 365'.format(rect_count)
             )
 
+    def _get_fill(self, idx, count):
+        try:
+            return next(
+                filter(lambda x: x['count'] in count, self.data['rects'])
+            )['fill']
+        except StopIteration:
+            # TODO: use debug logging
+            print("Using default fill")
+            return FILL_DEFAULT[idx]
+
     def _create_colormap(self):
-        max_count = int(max(self.data['rects'], key=lambda r: r['count'])['count'])
-        thresholds = [int(max_count*x) for x in [0.25, 0.5, 0.75]]
-        # #ebedf0 = 0
-        # c6e48b = 1 <= x <= max/6
-        # 7bc96f = max/6 < x <= max/3
-        # 239a3b = max/3 < x <= max/2
-        # #196127 = x > max/2
-        print(max_count, thresholds)
+        """ Creates a map that determines the color
+            to be used for a given commit count according
+            to the following scheme:
+
+            count == 0                     => color0 (#ebedf0)
+            1 <= count <= max_count/6      => color1 (#c6e48b)
+            max_count/6 < x <= max_count/3 => color2 (#7bc96f)
+            max_count/3 < x <= max_count/2 => color3 (#239a3b)
+            count > max_count/2            => color4 (#1961270
+        """
+
+        max_count = max(self.data['rects'], key=lambda r: r['count'])['count']
+        thresh = [int(max_count/x)+1 for x in [6, 3, 2]]
+        # TODO: there has to be a better way to do this!
+        self.data['colormap'] = {
+            self._get_fill(0, range(0, 1)):
+                range(0, 1),
+            self._get_fill(1, range(1, thresh[0])):
+                range(1, thresh[0]),
+            self._get_fill(2, range(thresh[0], thresh[1])):
+                range(thresh[0], thresh[1]),
+            self._get_fill(3, range(thresh[1], thresh[2])):
+                range(thresh[1], thresh[2]),
+            self._get_fill(4, range(thresh[2], max_count+1)):
+                range(thresh[2], max_count+1)
+        }
 
     def _parse_graph_data(self, graph_data):
         root = ET.fromstring(graph_data)
@@ -65,18 +95,18 @@ class Graph:
         self.data['rects'] = [
             {
                 'date': rect.get('data-date'),
-                'count': rect.get('data-count'),
+                'count': int(rect.get('data-count')),
                 'fill': rect.get('fill'),
-                'x': rect.get('x'),
-                'y': rect.get('y')
+                'x': int(rect.get('x')),
+                'y': int(rect.get('y'))
             } for rect in root.iter('rect') if rect.get('class') == 'day'
         ]
 
         self.data['months'] = [
             {
                 'month': text.text,
-                'x': text.get('x'),
-                'y': text.get('y')
+                'x': int(text.get('x')),
+                'y': int(text.get('y'))
             } for text in root.iter('text') if text.get('class') == 'month'
         ]
 
@@ -84,8 +114,8 @@ class Graph:
             {
                 'wday': text.text,
                 'display': text.get('style') != "display: none;",
-                'x': text.get('dx'),
-                'y': text.get('dy')
+                'x': int(text.get('dx')),
+                'y': int(text.get('dy'))
             } for text in root.iter('text') if text.get('class') == 'wday'
         ]
 
