@@ -19,10 +19,9 @@ FILL_DEFAULT = ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127']
 class Graph:
     """Object that represents a user's github contribution graph."""
 
-    data = {}
-
     def __init__(self, username):
         self.username = username
+        self.data = {}
 
     @staticmethod
     def _graph_data_valid(data):
@@ -130,3 +129,11 @@ class Graph:
 
         self._graph_data_valid(graph_data)
         self._parse_graph_data(graph_data)
+
+    def fill(self):
+        """Fills contribution graph with random data."""
+
+        if self.data == {}:
+            raise ValueError(
+                'Graph data empty; maybe you need to call fill() first?'
+            )

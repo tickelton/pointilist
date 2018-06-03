@@ -537,5 +537,22 @@ class TestFetchMethod(unittest.TestCase):
         self.assertEqual(exc.code, 404)
 
 
+class TestFillMethod(unittest.TestCase):
+    """Tests for the Graph.fill() method."""
+
+    def test_fill_empty_data(self):
+        """Check for ValueError if fetch() was not called before fill()."""
+
+        g = graph.Graph('user')
+        with self.assertRaises(ValueError) as cm:
+            g.fill()
+
+        exc = cm.exception
+        self.assertEqual(
+            'Graph data empty; maybe you need to call fill() first?',
+            str(exc)
+        )
+
+
 if __name__ == '__main__':
     unittest.main()
