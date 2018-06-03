@@ -9,6 +9,7 @@
     :license: MIT, see LICENSE for details.
 """
 
+import logging
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -57,8 +58,7 @@ class Graph:
                 filter(lambda x: x['count'] in count, self.data['rects'])
             )['fill']
         except StopIteration:
-            # TODO: use debug logging
-            print("Using default fill")
+            logging.info("Using default fill for %s.", count)
             return FILL_DEFAULT[idx]
 
     def _create_colormap(self):

@@ -6,6 +6,7 @@
     Unit tests for pointilist.graph.
 """
 
+import logging
 import os
 import unittest
 import urllib.request
