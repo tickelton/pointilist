@@ -9,11 +9,13 @@
     :license: MIT, see LICENSE for details.
 """
 
+import random
 import logging
 import urllib.request
 import xml.etree.ElementTree as ET
 
 FILL_DEFAULT = ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127']
+RANDOM_BIAS = [0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 4]
 
 
 class Graph:
@@ -80,6 +82,7 @@ class Graph:
             ] for x in [[6, 3], [3, 2], [2, 1]]
         ]
         ranges_list = [[0, 1]] + [[1, ranges_list[0][0]]] + ranges_list
+
         self.data['colormap'] = [
             {
                 'fill': self._get_fill(
@@ -143,5 +146,17 @@ class Graph:
 
         if self.data == {}:
             raise ValueError(
-                'Graph data empty; maybe you need to call fill() first?'
+                'Graph data empty; maybe you need to call fetch() first?'
             )
+
+        random.seed()
+        self.data['commits'] = []
+        for rect in self.data['rects']:
+            if rect['count'] == 0:
+                i = RANDOM_BIAS[random.randint(0, len(RANDOM_BIAS)-1)]
+                self.data['commits'].append(
+                    {
+                        'date': rect['date'],
+                        'count': self.data['colormap'][i]['range'].start
+                    }
+                )

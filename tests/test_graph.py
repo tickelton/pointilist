@@ -548,9 +548,20 @@ class TestFillMethod(unittest.TestCase):
 
         exc = cm.exception
         self.assertEqual(
-            'Graph data empty; maybe you need to call fill() first?',
+            'Graph data empty; maybe you need to call fetch() first?',
             str(exc)
         )
+
+    def test_fill_valid_data(self):
+        g = graph.Graph('user')
+        g.data = VALID_GRAPH_REFERENCE_DATA
+        g.fill()
+
+        self.assertEqual(len(g.data['commits']), 124)
+        self.assertIn(g.data['commits'][0]['count'], range(0, 5))
+        self.assertEqual(g.data['commits'][0]['date'], '2017-05-31')
+        self.assertIn(g.data['commits'][123]['count'], range(0, 5))
+        self.assertEqual(g.data['commits'][123]['date'], '2018-05-30')
 
 
 if __name__ == '__main__':
