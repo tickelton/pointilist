@@ -73,20 +73,28 @@ class Graph:
         """
 
         max_count = max(self.data['rects'], key=lambda r: r['count'])['count']
-        thresh = [int(max_count/x)+1 for x in [6, 3, 2]]
-        # TODO: there has to be a better way to do this!
-        self.data['colormap'] = {
-            self._get_fill(0, range(0, 1)):
-                range(0, 1),
-            self._get_fill(1, range(1, thresh[0])):
-                range(1, thresh[0]),
-            self._get_fill(2, range(thresh[0], thresh[1])):
-                range(thresh[0], thresh[1]),
-            self._get_fill(3, range(thresh[1], thresh[2])):
-                range(thresh[1], thresh[2]),
-            self._get_fill(4, range(thresh[2], max_count+1)):
-                range(thresh[2], max_count+1)
-        }
+        ranges_list = [
+            [
+                int(max_count/x[0])+1,
+                int(max_count/x[1])+1
+            ] for x in [[6, 3], [3, 2], [2, 1]]
+        ]
+        ranges_list = [[0, 1]] + [[1, ranges_list[0][0]]] + ranges_list
+        self.data['colormap'] = [
+            {
+                'fill': self._get_fill(
+                    i,
+                    range(
+                        ranges_list[i][0],
+                        ranges_list[i][1]
+                    )
+                ),
+                'range': range(
+                    ranges_list[i][0],
+                    ranges_list[i][1]
+                )
+            } for i in range(0, 5)
+        ]
 
     def _parse_graph_data(self, graph_data):
         root = ET.fromstring(graph_data)

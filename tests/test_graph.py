@@ -6,7 +6,6 @@
     Unit tests for pointilist.graph.
 """
 
-import logging
 import os
 import unittest
 import urllib.request
@@ -418,13 +417,13 @@ VALID_GRAPH_REFERENCE_DATA = {
     {'count': 0, 'date': '2018-05-30', 'x': -39, 'y': 36, 'fill': '#ebedf0'},
     {'count': 4, 'date': '2018-05-31', 'x': -39, 'y': 48, 'fill': '#196127'}
   ],
-  'colormap': {
-    '#239a3b': range(3, 4),
-    '#7bc96f': range(2, 3),
-    '#ebedf0': range(0, 1),
-    '#196127': range(4, 8),
-    '#c6e48b': range(1, 2)
-  }
+  'colormap': [
+    {'fill': '#ebedf0', 'range': range(0, 1)},
+    {'fill': '#c6e48b', 'range': range(1, 2)},
+    {'fill': '#7bc96f', 'range': range(2, 3)},
+    {'fill': '#239a3b', 'range': range(3, 4)},
+    {'fill': '#196127', 'range': range(4, 8)}
+  ]
 }
 
 mock_response_fd = StringIO("foobar")
