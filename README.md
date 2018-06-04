@@ -1,4 +1,6 @@
 # pointilist
+[![Build Status](https://travis-ci.org/tickelton/pointilist.svg?branch=master)](https://travis-ci.org/tickelton/pointilist)
+
 **NOTE: Currently this README only acts as a mission statement for what pointilist is supposed to become but does not describe the current state of the project.**
 
 **pointilist** will be a standalone tool that allows you to either draw on your github contribution calendar, or just have it filled automatically with random data.
