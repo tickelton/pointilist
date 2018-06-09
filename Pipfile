@@ -6,6 +6,9 @@ name = "pypi"
 [dev-packages]
 
 [packages]
+"urllib3" = "*"
+certifi = "*"
+dulwich = "*"
 
 [requires]
 python_version = "3.5"
