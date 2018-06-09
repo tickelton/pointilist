@@ -17,7 +17,8 @@ import tempfile
 class Repo:
     """Object that represents an actual git repository."""
 
-    def __init__(self, tempdir=None):
+    def __init__(self, commits, tempdir=None):
+        self.commits = commits
         self.tempdir = tempfile.mkdtemp(dir=tempdir)
 
     def __enter__(self):
@@ -26,13 +27,13 @@ class Repo:
     def __exit__(self, exc_type, exc_value, traceback):
         shutil.rmtree(self.tempdir)
 
-    def populate(self, commits):
+    def populate(self):
         """Populates the repository with fake commits."""
 
-        if not commits:
-            logging.warning('Commit data missing; len(commits) == 0')
+        if not self.commits:
+            logging.warning('Commit data missing.')
             return
 
-        #if not all([True for c in commits if c['count'] > 0]):
-        #    logging.warning('Nothing to commit.')
-        #    return
+        if not [True for c in self.commits if c['count'] > 0]:
+            logging.warning('Nothing to commit.')
+            return
